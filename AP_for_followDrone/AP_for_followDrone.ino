@@ -13,9 +13,8 @@ void setup() {
   IPAddress apIP(192, 168, 1, 1);
   IPAddress subnet(255, 255, 255, 0);
   WiFi.softAPConfig(apIP, apIP, subnet);
-
+  
   server.begin();
-
   Serial.print("Access Point IP address: ");
   Serial.println(WiFi.softAPIP());
 }
@@ -23,13 +22,8 @@ void setup() {
 void loop() {
   if (client.connected()) {
     if (client.available()) {
-
       String data = client.readStringUntil('\n');
-      Serial.print("Received data: ");
       Serial.println(data);
-
-      // Process the received data as needed
-    //  client.println("Data received successfully.");
     }
   } else {
     Serial.println("Client disconnected.");
