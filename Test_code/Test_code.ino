@@ -1,7 +1,7 @@
 #include <TinyGPS++.h>
 
 #define GPS_BAUDRATE 9600  // The default baudrate of NEO-6M is 9600
-#define RX2 16
+#define RX2 16 //
 #define TX2 17
 #define PCK_INTERVAL 200
 
@@ -28,7 +28,7 @@ void getData() {
 void setup() {
   Serial.begin(115200);  
   gpsSerial.begin(GPS_BAUDRATE);
-  Seria.println("GPS module connecting...")
+  Serial.println("GPS module connecting...");
 }
 
 void loop() {
