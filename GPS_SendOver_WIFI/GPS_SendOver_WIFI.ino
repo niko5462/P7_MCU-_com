@@ -1,18 +1,9 @@
-/*
-   This ESP32 code is created by esp32io.com
-
-   This ESP32 code is released in the public domain
-
-   For more detail (instruction and wiring diagram), visit https://esp32io.com/tutorials/esp32-gps
-*/
-
 #include <TinyGPS++.h>
-#include <SoftwareSerial.h>
 #include <WiFi.h>
 
 #define GPS_BAUDRATE 9600  // The default baudrate of NEO-6M is 9600
-#define RX2 19
-#define TX2 18
+#define RX2 16
+#define TX2 17
 #define PCK_INTERVAL 200
 
 const char* ssid = "followDrone";    // Same as the access point SSID
@@ -23,9 +14,8 @@ const int serverPort = 80;
 
 
 WiFiClient client;
-
+HardwareSerial gpsSerial(2);
 TinyGPSPlus gps;  // the TinyGPS++ object
-EspSoftwareSerial::UART ss;
 
 char gpsData[100];
 
@@ -37,7 +27,6 @@ struct Data {
 } Loc;
 
 void getData() {
-  //Serial.println(F("GPS Signal: (lat, lng, alt)"));
   Loc.Lat = gps.location.lat();
   Loc.Long = gps.location.lng();
   Loc.Alt = gps.altitude.meters();
@@ -57,38 +46,27 @@ void connectToServer() {
   }
 }
 
-
-/*
-String dataToSend() {
-  const String positionObject = " per pik";  //TODO: DENNE LINJE SKAL ERSTATTES MED LONG LAT ALT FRA GPS SIGNAL
-  return positionObject;
-}
-*/
-
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);  
+  gpsSerial.begin(GPS_BAUDRATE);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi...");
   }
-
   Serial.println("Connected to WiFi.");
   connectToServer();
-
-  ss.begin(GPS_BAUDRATE, SWSERIAL_8N1, RX2, TX2);
   Serial.println("GPS module activating...");
 }
 
 void loop() {
-  if (ss.available() > 0) {
-    if (gps.encode(ss.read())) {
+  if (gpsSerial.available() > 0) {
+    if (gps.encode(gpsSerial.read())) {
       if (gps.location.isValid()) {
         getData();
         sprintf(gpsData, "%.8f,%.8f,%.2f", Loc.Lat, Loc.Long, Loc.Alt);
-        Serial.println(gpsData);
-
+        
         if (millis() > 5000 && gps.charsProcessed() < 10) {
           Serial.println(F("No GPS data received: check wiring"));
         }
