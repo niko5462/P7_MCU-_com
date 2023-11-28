@@ -35,12 +35,21 @@ void loop() {
   if (gpsSerial.available() > 0) {
     if (gps.encode(gpsSerial.read())) {
       if (gps.location.isValid()) {
-        getData();
-        sprintf(gpsData, "%.8f,%.8f,%.2f", Loc.Lat, Loc.Long, Loc.Alt);
-        
-        if (millis() > 5000 && gps.charsProcessed() < 10) {
-          Serial.println(F("No GPS data received: check wiring"));
-        }
+      
+        //while(true){
+          getData();
+          //sprintf(gpsData, "%.8f,%.8f,%.2f", Loc.Lat, Loc.Long, Loc.Alt);
+          sprintf(gpsData, "%.8f,%.8f", Loc.Lat, Loc.Long);
+
+          if (millis() > 5000 && gps.charsProcessed() < 10) {
+            Serial.println(F("No GPS data received: check wiring"));
+            //break;
+          }
+
+          Serial.println(gpsData);
+          gpsData[0] = '\0';
+          delay(PCK_INTERVAL);
+       // }
       }
     }
   }

@@ -73,6 +73,7 @@ void loop() {
 
         if (client.connected()) {
           sendData(gpsData);
+          gpsData[0] = '\0';  // emptying the char array
           delay(PCK_INTERVAL);
         } else {
           Serial.println("Connection lost. Reconnecting...");
