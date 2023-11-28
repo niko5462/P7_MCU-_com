@@ -17,7 +17,7 @@ char dataSend[100];
  
 void sendDataLoop(char array, int dataVolume) {
     for (int i = 0; i < dataVolume; i++){
-        array = char(57000+i)+', '+char(9000+i);
+        sprintf(array, "%.8f,%.8f,%.2f", 57000+i, 9000+i, i);
         client.println(array);                      // sends the data to the client
         Serial.println("Data sent: " + array);
         array[0] = '\0';                            // emptying the char array  
