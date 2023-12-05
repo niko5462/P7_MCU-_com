@@ -15,7 +15,7 @@ void setup() {
   IPAddress apIP(192, 168, 1, 1);
   IPAddress subnet(255, 255, 255, 0);
   WiFi.softAPConfig(apIP, apIP, subnet);
-  
+
   server.begin();
   Serial.print("Access Point IP address: ");
   Serial.println(WiFi.softAPIP());
@@ -25,14 +25,19 @@ void loop() {
   if (client.connected()) {
     if (client.available()) {
       String data = client.readStringUntil('\n');
-      Serial.println(data);
-      cubeOrange.println(data + " Hello Cube"); //Trying to send directly with UART   
+      Serial.println("Received : " + data);
       mavlink_message_t msg;
       uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-      mavlink_msg_statustext_pack(1, 200, &msg, MAV_SEVERITY_INFO, data);
+
+      // Pack the message
+      mavlink_msg_statustext_pack(2, 200, &msg, MAV_SEVERITY_INFO, data.c_str());
+
+      // Convert the message to a sendable buffer
       uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-      cubeOrange.write(buf, len); //Trying to send Mavlink msg 
-      delay(1000);
+      // Write the buffer to the serial port
+      cubeOrange.write(buf, len);
+
+      delay(5);
     }
   } else {
     Serial.println("Client disconnected.");

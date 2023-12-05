@@ -1,7 +1,8 @@
+#include <mavlink.h> // Assuming mavlink.h is in the same directory as the source file
+#include <Arduino.h> // Arduino standard library
+#include <HardwareSerial.h> // Arduino standard library's hardware serial
 
-#include <mavlink.h>
 HardwareSerial cubeOrange(2);
-unsigned long oldTime = 0; 
 
 void setup() {
   cubeOrange.begin(57600);
@@ -9,18 +10,17 @@ void setup() {
 }
 
 void loop() {
-mavlink_message_t msg;
+  mavlink_message_t msg;
+  uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
-uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-mavlink_msg_statustext_pack(1, 200, &msg, MAV_SEVERITY_INFO, "-------------------------VICTOR ER LORT MED MASTER YI-------------------------");
-uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-
-// Send the message
-cubeOrange.write(buf, len);
-//Read the message
-String data = cubeOrange.readStringUntil('\n');
-Serial.println("Recieved: "+ data);
-// Delay for 1 second
-delay(1000);
-
+  // Pack the message
+  mavlink_msg_statustext_pack(2, 200, &msg, MAV_SEVERITY_INFO, "---------hello cube bitch------");
+  
+  // Convert the message to a sendable buffer
+  uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+  
+  // Write the buffer to the serial port
+  cubeOrange.write(buf, len);
+  
+  delay(5);
 }
