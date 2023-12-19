@@ -1,6 +1,5 @@
 #include <WiFi.h>
 #include <mavlink.h>
-
 const char* apSSID = "followDrone";
 const char* apPassword = "AndersOst";
 
@@ -16,7 +15,7 @@ void setup() {
   IPAddress apIP(192, 168, 1, 1);
   IPAddress subnet(255, 255, 255, 0);
   WiFi.softAPConfig(apIP, apIP, subnet);
-  
+
   server.begin();
   Serial.print("Access Point IP address: ");
   Serial.println(WiFi.softAPIP());
@@ -25,14 +24,19 @@ void setup() {
 void loop() {
   if (client.connected()) {
     if (client.available()) {
-      String data = client.readStringUntil('\n');
-      Serial.println(data);
-      cubeOrange.println(data + "per pik");      
-     // mavlink_message_t msg;
-     // uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-     // uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-     // cubeOrange.write(buf, len);
-      delay(1000);
+      String incoming = client.readStringUntil('\n');
+      String data = "$" + incoming + "#" + "\r\n";
+      Serial.println("Received : " + data);
+      mavlink_message_t msg;
+      uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+      // Pack the message
+      mavlink_msg_statustext_pack(2, 200, &msg, MAV_SEVERITY_INFO, data.c_str());
+      
+      // Convert the message to a sendable buffer
+      uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+      // Write the buffer to the serial port
+      cubeOrange.write(buf, len);
+      delay(5);
     }
   } else {
     Serial.println("Client disconnected.");
