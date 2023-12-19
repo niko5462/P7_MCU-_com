@@ -24,19 +24,18 @@ void setup() {
 void loop() {
   if (client.connected()) {
     if (client.available()) {
-      String data = client.readStringUntil('\n');
+      String incoming = client.readStringUntil('\n');
+      String data = "$" + incoming + "#" + "\r\n";
       Serial.println("Received : " + data);
       mavlink_message_t msg;
       uint8_t buf[MAVLINK_MAX_PACKET_LEN];
-
       // Pack the message
       mavlink_msg_statustext_pack(2, 200, &msg, MAV_SEVERITY_INFO, data.c_str());
-
+      
       // Convert the message to a sendable buffer
       uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
       // Write the buffer to the serial port
       cubeOrange.write(buf, len);
-
       delay(5);
     }
   } else {
