@@ -14,7 +14,7 @@ void loop() {
   uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
   // Pack the message
-  mavlink_msg_statustext_pack(2, 200, &msg, MAV_SEVERITY_INFO, "---------hello cube bitch------");
+  mavlink_msg_statustext_pack(2, 200, &msg, MAV_SEVERITY_INFO, "---------hello cube------");
   
   // Convert the message to a sendable buffer
   uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
