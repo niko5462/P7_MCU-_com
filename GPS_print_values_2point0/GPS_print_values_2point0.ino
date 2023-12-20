@@ -34,8 +34,6 @@ void getData() {
 void setup() {
   Serial.begin(9600);
   ss.begin(GPS_BAUDRATE, SWSERIAL_8N1, RX2, TX2);
-
-  Serial.println(F("ESP32 - GPS module"));
 }
 
 void loop() {
@@ -45,7 +43,6 @@ void loop() {
         getData();
         sprintf(gpsData, "%.8f,%.8f,%.2f", Loc.Lat, Loc.Long, Loc.Alt);
         Serial.println(gpsData);
-
         if (millis() > 5000 && gps.charsProcessed() < 10) {
           Serial.println(F("No GPS data received: check wiring"));
         }
