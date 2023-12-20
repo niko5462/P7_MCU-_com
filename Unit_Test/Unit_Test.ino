@@ -1,11 +1,3 @@
-/*
-   This ESP32 code is created by esp32io.com
-
-   This ESP32 code is released in the public domain
-
-   For more detail (instruction and wiring diagram), visit https://esp32io.com/tutorials/esp32-gps
-*/
-
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
 
@@ -13,7 +5,6 @@
 #define RX2 19
 #define TX2 18
 #define PCK_INTERVAL 200
-
 
 TinyGPSPlus gps;  // the TinyGPS++ object
 EspSoftwareSerial::UART ss;
@@ -33,13 +24,6 @@ void getData() {
   Loc.Long = gps.location.lng();
   Loc.Alt = gps.altitude.meters();
 }
-
-/*
-String dataToSend() {
-  const String positionObject = " per pik";  //TODO: DENNE LINJE SKAL ERSTATTES MED LONG LAT ALT FRA GPS SIGNAL
-  return positionObject;
-}
-*/
 
 void setup() {
   Serial.begin(9600);
